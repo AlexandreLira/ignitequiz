@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Alert, ScrollView, Text, View } from 'react-native';
 import Animated, { Easing, Extrapolate, Extrapolation, interpolate, runOnJS, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
 import { useNavigation, useRoute } from '@react-navigation/native';
-
+import { Audio } from 'expo-av'
 import { styles } from './styles';
 
 import { QUIZ } from '../../data/quiz';
@@ -45,6 +45,15 @@ export function Quiz() {
   const route = useRoute();
   const { id } = route.params as Params;
 
+  async function playSound(isCorrent: boolean) {
+    const file = isCorrent ? require('../../assets/correct.mp3') : require('../../assets/wrong.mp3')
+
+    const { sound } = await Audio.Sound.createAsync(file, { shouldPlay: true })
+
+    await sound.setPositionAsync(0);
+    await sound.playAsync();
+  }
+
   function handleSkipConfirm() {
     Alert.alert('Pular', 'Deseja realmente pular a questão?', [
       { text: 'Não', onPress: () => { } },
@@ -81,9 +90,11 @@ export function Quiz() {
     }
 
     if (quiz.questions[currentQuestion].correct === alternativeSelected) {
+      await playSound(true)
       setStatusReply(1)
       setPoints(prevState => prevState + 1);
     } else {
+      await playSound(false)
       setStatusReply(2)
       shakeAnimation()
     }
@@ -228,7 +239,7 @@ export function Quiz() {
 
         <GestureDetector gesture={onPan}>
           <Animated.View style={[shakeStyleAnimated, dragStyles]}>
-           
+
             <Question
               key={quiz.questions[currentQuestion].title}
               question={quiz.questions[currentQuestion]}
