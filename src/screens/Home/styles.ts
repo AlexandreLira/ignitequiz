@@ -11,7 +11,9 @@ export const styles = StyleSheet.create({
   levels: {
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+
     marginTop: 32
   },
   cards: {

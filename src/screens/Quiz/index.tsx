@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Alert, ScrollView, Text, View } from 'react-native';
+import { Alert, BackHandler, ScrollView, Text, View } from 'react-native';
 import Animated, { Easing, Extrapolate, Extrapolation, interpolate, runOnJS, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Audio } from 'expo-av'
-import { styles } from './styles';
-
+import * as Haptics from 'expo-haptics';
 import { QUIZ } from '../../data/quiz';
 import { historyAdd } from '../../storage/quizHistoryStorage';
 
@@ -17,6 +16,9 @@ import { ProgressBar } from '../../components/ProgressBar';
 import { THEME } from '../../styles/theme';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { OverlayFeedback } from '../../components/OverlayFeedback';
+
+import { styles } from './styles';
+
 
 interface Params {
   id: string;
@@ -90,6 +92,7 @@ export function Quiz() {
     }
 
     if (quiz.questions[currentQuestion].correct === alternativeSelected) {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
       await playSound(true)
       setStatusReply(1)
       setPoints(prevState => prevState + 1);
@@ -119,7 +122,8 @@ export function Quiz() {
     return true;
   }
 
-  function shakeAnimation() {
+  async function shakeAnimation() {
+    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
     shake.value = withSequence(
       withTiming(3, { easing: Easing.bounce }),
       withTiming(0)
@@ -139,6 +143,10 @@ export function Quiz() {
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
+      const positionY = event.contentOffset.y;
+      if(positionY >= 60){
+        
+      }
       scrollY.value = event.contentOffset.y;
     }
   })
@@ -204,6 +212,12 @@ export function Quiz() {
       handleNextQuestion();
     }
   }, [points]);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleStop);
+
+    return () => backHandler.remove()
+  }, [])
 
   if (isLoading) {
     return <Loading />

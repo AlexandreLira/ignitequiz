@@ -1,9 +1,11 @@
-import { StatusBar } from 'react-native';
+import { LogBox, StatusBar } from 'react-native';
 import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto';
 
 import { Routes } from './src/routes';
 import { Loading } from './src/components/Loading';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+LogBox.ignoreAllLogs() 
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold });

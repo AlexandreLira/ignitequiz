@@ -87,7 +87,7 @@ export function History() {
                 onSwipeableOpen={() => handleRemove(item.id, index)}
                 leftThreshold={5}
                 overshootLeft={false}
-                containerStyle={styles.swipeableContainer}
+               
                 renderLeftActions={() =>
                   <Pressable
                     style={styles.swipeableRemove}

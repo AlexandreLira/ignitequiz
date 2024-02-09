@@ -3,7 +3,7 @@ import { THEME } from '../../styles/theme';
 
 export const styles = StyleSheet.create({
   container: {
-    width: 84,
+    flex: 1,
     height: 35,
     borderRadius: 4,
     backgroundColor: 'transparent',
